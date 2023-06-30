@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -13,6 +14,9 @@ import (
 
 	"github.com/ImpressionableRaccoon/lds"
 )
+
+//go:embed static
+var staticFS embed.FS
 
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
@@ -51,6 +55,7 @@ func main() {
 		}
 	}()
 
+	http.Handle("/static/", http.FileServer(http.FS(staticFS)))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data, err := json.Marshal(l.Get())
 		if err != nil {

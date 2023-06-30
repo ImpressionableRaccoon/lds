@@ -1,5 +1,13 @@
 # ```httpServer``` - simple http server to server sensor data
 
+## Build
+
+### For Raspberry Pi 4B
+
+```shell
+CGO_ENABLED=0 GOOS=linux GOARCH=arm go build .
+```
+
 ## Usage
 
 Run `main.go` with parameters
