@@ -11,7 +11,7 @@ import (
 type Data struct {
 	Config      Config    `json:"config"`
 	LastUpdated time.Time `json:"last_updated"`
-	Points      []Point   `json:"point"`
+	Points      []Point   `json:"points"`
 }
 
 type Point struct {
