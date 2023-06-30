@@ -19,3 +19,13 @@
 
 # Go workspace file
 go.work
+
+# IDE data
+.idea
+.vscode
+
+# macOS data
+.DS_Store
+
+# local linter files
+examples/.golangci.yml
