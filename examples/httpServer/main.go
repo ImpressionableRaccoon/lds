@@ -26,6 +26,7 @@ func main() {
 		serverAddress = flag.String("a", ":15848", "http server address")
 		serialPort    = flag.String("p", "", "serial port name")
 		baudRate      = flag.Int("b", 230400, "baud rate")
+		zeroShift     = flag.Int("s", 0, "zero shift")
 	)
 	flag.Parse()
 
@@ -35,8 +36,9 @@ func main() {
 	}
 
 	l, err := lds.New(lds.Config{
-		PortName: *serialPort,
-		BaudRate: *baudRate,
+		PortName:  *serialPort,
+		BaudRate:  *baudRate,
+		ZeroShift: *zeroShift,
 	})
 	if err != nil {
 		panic(err)

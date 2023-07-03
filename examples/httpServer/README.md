@@ -19,6 +19,8 @@ Run `main.go` with parameters
     baud rate (default 230400)
 -p string
     serial port name
+-s int
+    zero shift (default 0)
 ```
 
 ## Receive data

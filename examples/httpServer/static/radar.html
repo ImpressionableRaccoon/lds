@@ -100,8 +100,8 @@
                 .then(out => {
                     const data = [];
 
-                    out.points.forEach((element, index) => {
-                        data.push({"x": index, "y": element.range})
+                    out.points.forEach(element => {
+                        data.push({"x": element.angle, "y": element.range})
                     });
 
                     series.data.setAll(data);

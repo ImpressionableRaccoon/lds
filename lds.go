@@ -15,13 +15,15 @@ type Data struct {
 }
 
 type Point struct {
+	Angle     uint16 `json:"angle"`
 	Intensity uint16 `json:"intensity"`
 	Range     uint16 `json:"range"`
 }
 
 type Config struct {
-	PortName string `json:"port_name"`
-	BaudRate int    `json:"baud_rate"`
+	PortName  string `json:"port_name"`
+	BaudRate  int    `json:"baud_rate"`
+	ZeroShift int    `json:"zero_shift"`
 }
 
 type Lidar struct {
@@ -118,26 +120,24 @@ func (l *Lidar) Close() error {
 }
 
 func (l *Lidar) updatePoints(raw []byte) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
+	points := make([]Point, 0, 360)
 	for i := 0; i < len(raw); i += 42 {
 		if raw[i] != 0xFA || raw[i+1] != byte(0xA0+i/42) {
 			continue
 		}
 
 		for j := i + 4; j < i+40; j += 6 {
-			index := 6*(i/42) + (j-4-i)/6
-
-			byte0 := uint16(raw[j])
-			byte1 := uint16(raw[j+1])
-			byte2 := uint16(raw[j+2])
-			byte3 := uint16(raw[j+3])
-
-			l.points[index].Intensity = (byte1 << 8) + byte0
-			l.points[index].Range = (byte3 << 8) + byte2
+			points = append(points, Point{
+				Angle:     (uint16(6*(i/42)+(j-4-i)/6+l.cfg.ZeroShift)%360 + 360) % 360,
+				Intensity: (uint16(raw[j+1]) << 8) + uint16(raw[j]),
+				Range:     (uint16(raw[j+3]) << 8) + uint16(raw[j+2]),
+			})
 		}
 	}
 
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	l.points = points
 	l.lastUpdated = time.Now().UTC()
 }
