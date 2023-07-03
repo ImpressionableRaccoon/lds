@@ -1,0 +1,35 @@
+name: lint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+jobs:
+  golangci:
+    name: golangci-lint
+    concurrency:
+      group: lint-golangci-${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+  golangci-examples:
+    name: golangci-lint-examples
+    concurrency:
+      group: lint-golangci-examples-${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: generate examples golangci-lint config
+        run: sed 's/github.com\/ImpressionableRaccoon\/lds/examples/g' .golangci.yml > examples/.golangci.yml
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: examples
